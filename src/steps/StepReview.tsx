@@ -59,9 +59,13 @@ export function StepReview({ data, files }: Props) {
         <Row
           label="Smena"
           value={
-            ({ ertalabki: 'Ertalabki', kechki: 'Kechki', navbat: 'Navbatma-navbat' } as const)[
-              data.shiftPreference
-            ] || ''
+            data.shiftPreference === 'ertalabki'
+              ? 'Ertalabki'
+              : data.shiftPreference === 'kechki'
+                ? 'Kechki'
+                : data.shiftPreference === 'navbat'
+                  ? 'Navbatma-navbat'
+                  : ''
           }
         />
         <Row label="Maosh" value={data.salaryRequest} />
