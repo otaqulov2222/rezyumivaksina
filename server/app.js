@@ -13,14 +13,26 @@ const upload = multer({
   limits: { fileSize: 8 * 1024 * 1024 },
 });
 
+/** "id1,id2" yoki bitta id */
+function parseChatIds(raw) {
+  return String(raw || '')
+    .split(/[,;\s]+/)
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+
 export function createApp() {
   const app = express();
   app.use(cors());
   app.use(express.json({ limit: '2mb' }));
 
   app.get('/api/health', (_req, res) => {
-    const configured = Boolean(process.env.TELEGRAM_BOT_TOKEN && process.env.TELEGRAM_CHAT_ID);
-    res.json({ ok: true, telegramConfigured: configured });
+    const chatIds = parseChatIds(process.env.TELEGRAM_CHAT_ID);
+    res.json({
+      ok: true,
+      telegramConfigured: Boolean(process.env.TELEGRAM_BOT_TOKEN && chatIds.length),
+      chatCount: chatIds.length,
+    });
   });
 
   app.post(
@@ -33,9 +45,9 @@ export function createApp() {
     async (req, res) => {
       try {
         const botToken = process.env.TELEGRAM_BOT_TOKEN;
-        const chatId = process.env.TELEGRAM_CHAT_ID;
+        const chatIds = parseChatIds(process.env.TELEGRAM_CHAT_ID);
 
-        if (!botToken || !chatId) {
+        if (!botToken || chatIds.length === 0) {
           res.status(500).json({
             ok: false,
             error:
@@ -78,35 +90,42 @@ export function createApp() {
           .filter(Boolean)
           .join('\n');
 
-        await sendMessageToTelegram({ botToken, chatId, text: caption });
-        await sendPdfToTelegram({
-          botToken,
-          chatId,
-          pdfBuffer,
-          filename,
-          caption: `PDF rezyume: ${data.fullName}`,
-        });
-
         const files = req.files || {};
-        for (const [field, label] of [
+        const attachments = [
           ['passport', 'Pasport'],
           ['diploma', 'Diplom'],
           ['resume', 'Rezyume'],
-        ]) {
-          const list = files[field];
-          if (list?.[0]) {
-            const f = list[0];
-            await sendFileToTelegram({
-              botToken,
-              chatId,
-              buffer: f.buffer,
-              filename: f.originalname || `${field}.bin`,
-              caption: `${label} — ${data.fullName}`,
-            });
+        ];
+
+        for (const chatId of chatIds) {
+          await sendMessageToTelegram({ botToken, chatId, text: caption });
+          await sendPdfToTelegram({
+            botToken,
+            chatId,
+            pdfBuffer,
+            filename,
+            caption: `PDF rezyume: ${data.fullName}`,
+          });
+
+          for (const [field, label] of attachments) {
+            const list = files[field];
+            if (list?.[0]) {
+              const f = list[0];
+              await sendFileToTelegram({
+                botToken,
+                chatId,
+                buffer: f.buffer,
+                filename: f.originalname || `${field}.bin`,
+                caption: `${label} — ${data.fullName}`,
+              });
+            }
           }
         }
 
-        res.json({ ok: true, message: 'Anketa Telegramga yuborildi.' });
+        res.json({
+          ok: true,
+          message: `Anketa ${chatIds.length} ta chatga yuborildi.`,
+        });
       } catch (err) {
         console.error(err);
         res.status(500).json({
