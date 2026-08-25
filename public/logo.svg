@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 150" fill="none" role="img" aria-label="VAKSINA MED">
+  <!-- Icon -->
+  <g transform="translate(75,75)">
+    <path d="M-44.5 -18.5 A50 50 0 1 1 -18.5 44.5" stroke="#4A1D6E" stroke-width="3.4" stroke-linecap="round"/>
+    <path d="M18.5 -44.5 A50 50 0 1 1 44.5 18.5" stroke="#4A1D6E" stroke-width="3.4" stroke-linecap="round"/>
+    <path d="M-37 -15.5 A41 41 0 1 1 -15.5 37" stroke="#4A1D6E" stroke-width="2.4" stroke-linecap="round" opacity="0.85"/>
+    <path d="M15.5 -37 A41 41 0 1 1 37 15.5" stroke="#4A1D6E" stroke-width="2.4" stroke-linecap="round" opacity="0.85"/>
+
+    <g transform="rotate(-42)">
+      <path d="M40 0 L64 0 L40 -3.2 L40 3.2 Z" fill="#4A1D6E"/>
+      <rect x="-30" y="-12" width="72" height="24" rx="5" fill="#F5C518"/>
+      <g stroke="#FFF" stroke-width="2.2" stroke-linecap="round">
+        <line x1="-16" y1="-7" x2="-16" y2="7"/>
+        <line x1="-4" y1="-7" x2="-4" y2="7"/>
+        <line x1="8" y1="-7" x2="8" y2="7"/>
+        <line x1="20" y1="-7" x2="20" y2="7"/>
+      </g>
+      <rect x="-38" y="-16" width="10" height="32" rx="2.5" fill="#4A1D6E"/>
+      <rect x="-56" y="-5.5" width="20" height="11" rx="2.5" fill="#4A1D6E"/>
+      <rect x="-62" y="-13" width="8" height="26" rx="2.5" fill="#4A1D6E"/>
+    </g>
+  </g>
+
+  <!-- Wordmark: crisp vector text, no white fringe -->
+  <text x="155" y="98"
+        font-family="Arial Rounded MT Bold, Nunito, Segoe UI, Arial Black, sans-serif"
+        font-size="68" font-weight="800" letter-spacing="0.5">
+    <tspan fill="#4A1D6E">VAKSINA</tspan><tspan fill="#F5C518"> MED</tspan>
+  </text>
+</svg>
