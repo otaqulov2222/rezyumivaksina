@@ -61,6 +61,12 @@ yoki [ngrok](https://ngrok.com) — chiqqan HTTPS linkni nomzodga yuboring.
 - Professional PDF anketa/rezyume
 - Yuklangan pasport / diplom / rezyume fayllari (agar boʻlsa)
 
-## Eslatma
+## Vercel deploy
 
-`.env` ni hech kimga ulashmang — bot token sir hisoblanadi.
+1. GitHub repo ulangan boʻlsin (`otaqulov2222/rezyumivaksina`)
+2. **Environment Variables** qoʻshing:
+   - `TELEGRAM_BOT_TOKEN` — BotFather token
+   - `TELEGRAM_CHAT_ID` — PDF keladigan chat ID
+3. Framework: **Vite** → **Deploy**
+
+Deploydan keyin ochilgan `*.vercel.app` linkni nomzodlarga bering.
