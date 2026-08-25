@@ -4,7 +4,7 @@
   ],
   "functions": {
     "api/index.js": {
-      "includeFiles": "server/**",
+      "includeFiles": "{server/**,node_modules/pdfkit/**,node_modules/fontkit/**,node_modules/linebreak/**,node_modules/unicode-properties/**,node_modules/tiny-inflate/**,node_modules/brotli/**,node_modules/png-js/**,node_modules/jpeg-exif/**}",
       "maxDuration": 60
     }
   }

@@ -46,6 +46,8 @@ export function buildApplicationPdf(data) {
 
     doc.registerFont('Regular', FONT);
     doc.registerFont('Bold', FONT_BOLD);
+    // Vercel: never touch built-in Helvetica (files may be missing in serverless)
+    doc.font('Regular');
 
     const pageW = doc.page.width;
     const contentW = pageW - 96;
