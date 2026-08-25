@@ -590,6 +590,14 @@ select {
   background: var(--accent-soft);
 }
 
+.check-row {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
 .check-row input {
   width: 1.05rem;
   height: 1.05rem;
