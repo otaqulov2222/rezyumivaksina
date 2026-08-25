@@ -103,14 +103,33 @@ export function StepAdditional({ data, onChange }: Props) {
         </label>
       </fieldset>
 
-      <label className="field">
-        <span>Chet tillarini bilish darajasi</span>
+      <label className="skip-row">
         <input
-          value={data.foreignLanguages}
-          onChange={(e) => onChange({ foreignLanguages: e.target.value })}
-          placeholder="Masalan: Ingliz — oʻrta, Rus — erkin"
+          type="checkbox"
+          checked={data.noForeignLanguages}
+          onChange={() =>
+            onChange({
+              noForeignLanguages: !data.noForeignLanguages,
+              foreignLanguages: !data.noForeignLanguages ? '' : data.foreignLanguages,
+            })
+          }
         />
+        <span>
+          <strong>Chet tilini bilmayman</strong>
+          <em>Faqat ona tili</em>
+        </span>
       </label>
+
+      {!data.noForeignLanguages && (
+        <label className="field">
+          <span>Chet tillarini bilish darajasi</span>
+          <input
+            value={data.foreignLanguages}
+            onChange={(e) => onChange({ foreignLanguages: e.target.value })}
+            placeholder="Masalan: Ingliz — oʻrta, Rus — erkin"
+          />
+        </label>
+      )}
 
       <fieldset className="choice-group">
         <legend>Dori vositalari haqida bilim darajasi</legend>

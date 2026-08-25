@@ -548,12 +548,46 @@ select {
   gap: 0.45rem;
 }
 
-.check-row {
+.skip-row {
   display: flex;
-  align-items: center;
-  gap: 0.55rem;
-  font-size: 0.95rem;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin: 0 0 1.15rem;
+  padding: 0.95rem 1rem;
+  border: 1px dashed var(--line);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.55);
   cursor: pointer;
+}
+
+.skip-row input {
+  margin-top: 0.2rem;
+  width: 1.1rem;
+  height: 1.1rem;
+  accent-color: var(--accent);
+  flex-shrink: 0;
+}
+
+.skip-row span {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.skip-row strong {
+  font-size: 0.95rem;
+  color: var(--brand);
+}
+
+.skip-row em {
+  font-style: normal;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.skip-row:has(input:checked) {
+  border-color: var(--accent);
+  background: var(--accent-soft);
 }
 
 .check-row input {

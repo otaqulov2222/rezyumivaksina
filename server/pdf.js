@@ -196,14 +196,22 @@ export function buildApplicationPdf(data) {
 
     // 2. Ta'lim
     drawSection('2. Taʼlim');
-    drawRow('Taʼlim muassasasi', data.educationInstitution);
-    drawTwoCol('Bitirgan yili', data.graduationYear, 'Mutaxassisligi', data.specialty);
-    drawRow('Diplom seriyasi va raqami', data.diplomaNumber);
+    if (data.noEducation) {
+      drawRow('Holat', "Oʻqimagan / maxsus taʼlim yoʻq");
+    } else {
+      drawRow('Taʼlim muassasasi', data.educationInstitution);
+      drawTwoCol('Bitirgan yili', data.graduationYear, 'Mutaxassisligi', data.specialty);
+      drawRow('Diplom seriyasi va raqami', data.diplomaNumber);
+    }
 
     // 3. Ish tajribasi
     drawSection('3. Ish tajribasi');
-    drawTwoCol('Oxirgi ish joyi', data.lastWorkplace, 'Lavozimi', data.position);
-    drawTwoCol('Ish staji (yil)', data.experienceYears, 'Ishdan ketish sababi', data.leaveReason);
+    if (data.noExperience) {
+      drawRow('Holat', "Ish tajribasi yoʻq");
+    } else {
+      drawTwoCol('Oxirgi ish joyi', data.lastWorkplace, 'Lavozimi', data.position);
+      drawTwoCol('Ish staji (yil)', data.experienceYears, 'Ishdan ketish sababi', data.leaveReason);
+    }
 
     // 4. Qo'shimcha
     drawSection('4. Qoʻshimcha maʼlumotlar');
@@ -224,7 +232,10 @@ export function buildApplicationPdf(data) {
         data.medicineKnowledge
       )
     );
-    drawRow('Chet tillari', data.foreignLanguages);
+    drawRow(
+      'Chet tillari',
+      data.noForeignLanguages ? 'Bilmayman' : data.foreignLanguages
+    );
 
     const quals = [];
     if (data.qualities?.responsible) quals.push('Masʼuliyatli');
@@ -240,11 +251,16 @@ export function buildApplicationPdf(data) {
     drawTwoCol(
       'Afzal smena',
       labelMap(
-        { ertalabki: 'Ertalabki', kechki: 'Kechki', navbat: 'Navbatma-navbat' },
+        {
+          ertalabki: 'Ertalabki',
+          kechki: 'Kechki',
+          navbat: 'Navbatma-navbat',
+          farqi_yoq: 'Farqi yoq',
+        },
         data.shiftPreference
       ),
-      'Maosh soʻrovi',
-      data.salaryRequest
+      'Maosh sorovi',
+      data.salaryNegotiable ? 'Kelishiladi' : data.salaryRequest
     );
     if (data.additionalNotes) {
       drawParagraph('Qoʻshimcha izoh', data.additionalNotes);
@@ -252,26 +268,34 @@ export function buildApplicationPdf(data) {
 
     // 6. Hujjatlar
     drawSection('6. Hujjatlar');
-    const docs = [];
-    if (data.hasPassport) docs.push('Pasport nusxasi');
-    if (data.hasDiploma) docs.push('Diplom nusxasi');
-    if (data.hasResume) docs.push('Rezyume');
-    drawRow('Biriktirilgan / mavjud', docs.length ? docs.join(', ') : 'Koʻrsatilmagan');
+    if (data.noDocuments) {
+      drawRow('Holat', 'Hozircha yuklanmagan');
+    } else {
+      const docs = [];
+      if (data.hasPassport) docs.push('Pasport nusxasi');
+      if (data.hasDiploma) docs.push('Diplom nusxasi');
+      if (data.hasResume) docs.push('Rezyume');
+      drawRow('Biriktirilgan / mavjud', docs.length ? docs.join(', ') : "Ko'rsatilmagan");
+    }
 
     // 7. Kasbiy
     drawSection('7. Kasbiy bilimlar (test)');
-    const questions = [
-      ['8. Biseptol — qaysi guruh?', data.q8],
-      ['9. Terafleks va Terafleks Ultra farqi', data.q9],
-      ['10. APF ingibitorlari', data.q10],
-      ['11. «Uno» qoʻshimchasi nima anglatadi?', data.q11],
-      ['12. Geptral tarkibi', data.q12],
-      ['13. Litik aralashma tarkibi', data.q13],
-      ['14. Antigistamin guruhidagi dorilar', data.q14],
-      ['15. Analog va almashtirish (misol bilan)', data.q15],
-    ];
-    for (const [q, a] of questions) {
-      drawParagraph(q, a);
+    if (data.skipKnowledge) {
+      drawRow('Holat', "O'tkazib yuborilgan");
+    } else {
+      const questions = [
+        ['8. Biseptol — qaysi guruh?', data.q8],
+        ['9. Terafleks va Terafleks Ultra farqi', data.q9],
+        ['10. APF ingibitorlari', data.q10],
+        ['11. «Uno» qoshimchasi nima anglatadi?', data.q11],
+        ['12. Geptral tarkibi', data.q12],
+        ['13. Litik aralashma tarkibi', data.q13],
+        ['14. Antigistamin guruhidagi dorilar', data.q14],
+        ['15. Analog va almashtirish (misol bilan)', data.q15],
+      ];
+      for (const [q, a] of questions) {
+        drawParagraph(q, a);
+      }
     }
 
     // Footer

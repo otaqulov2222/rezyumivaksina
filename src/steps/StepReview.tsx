@@ -24,11 +24,24 @@ export function StepReview({ data, files }: Props) {
     data.qualities.teamwork && 'Jamoada ishlay oladi',
   ].filter(Boolean) as string[];
 
-  const docs = [
-    data.hasPassport && `Pasport${files.passport ? ` (${files.passport.name})` : ''}`,
-    data.hasDiploma && `Diplom${files.diploma ? ` (${files.diploma.name})` : ''}`,
-    data.hasResume && `Rezyume${files.resume ? ` (${files.resume.name})` : ''}`,
-  ].filter(Boolean) as string[];
+  const docs = data.noDocuments
+    ? ['Hozircha yuklanmagan']
+    : ([
+        data.hasPassport && `Pasport${files.passport ? ` (${files.passport.name})` : ''}`,
+        data.hasDiploma && `Diplom${files.diploma ? ` (${files.diploma.name})` : ''}`,
+        data.hasResume && `Rezyume${files.resume ? ` (${files.resume.name})` : ''}`,
+      ].filter(Boolean) as string[]);
+
+  const shift =
+    data.shiftPreference === 'ertalabki'
+      ? 'Ertalabki'
+      : data.shiftPreference === 'kechki'
+        ? 'Kechki'
+        : data.shiftPreference === 'navbat'
+          ? 'Navbatma-navbat'
+          : data.shiftPreference === 'farqi_yoq'
+            ? 'Farqi yoʻq'
+            : '';
 
   return (
     <div className="step-body">
@@ -47,29 +60,39 @@ export function StepReview({ data, files }: Props) {
 
       <dl className="review-block">
         <h3>Taʼlim va tajriba</h3>
-        <Row label="Muassasa" value={data.educationInstitution} />
-        <Row label="Mutaxassislik" value={data.specialty} />
-        <Row label="Oxirgi ish" value={`${data.lastWorkplace} / ${data.position}`} />
-        <Row label="Staj" value={data.experienceYears ? `${data.experienceYears} yil` : ''} />
+        <Row
+          label="Taʼlim"
+          value={
+            data.noEducation
+              ? 'Oʻqimagan / maxsus taʼlim yoʻq'
+              : [data.educationInstitution, data.specialty].filter(Boolean).join(' — ')
+          }
+        />
+        <Row
+          label="Tajriba"
+          value={
+            data.noExperience
+              ? 'Ish tajribasi yoʻq'
+              : [data.lastWorkplace, data.position, data.experienceYears && `${data.experienceYears} yil`]
+                  .filter(Boolean)
+                  .join(' / ')
+          }
+        />
       </dl>
 
       <dl className="review-block">
         <h3>Qoʻshimcha</h3>
         <Row label="Sifatlar" value={quals.join(', ')} />
+        <Row label="Smena" value={shift} />
         <Row
-          label="Smena"
-          value={
-            data.shiftPreference === 'ertalabki'
-              ? 'Ertalabki'
-              : data.shiftPreference === 'kechki'
-                ? 'Kechki'
-                : data.shiftPreference === 'navbat'
-                  ? 'Navbatma-navbat'
-                  : ''
-          }
+          label="Maosh"
+          value={data.salaryNegotiable ? 'Kelishiladi' : data.salaryRequest}
         />
-        <Row label="Maosh" value={data.salaryRequest} />
         <Row label="Hujjatlar" value={docs.join(', ')} />
+        <Row
+          label="Kasbiy test"
+          value={data.skipKnowledge ? 'Oʻtkazib yuborilgan' : 'Javoblar kiritilgan'}
+        />
       </dl>
     </div>
   );

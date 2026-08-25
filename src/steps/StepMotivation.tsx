@@ -17,7 +17,7 @@ export function StepMotivation({ data, onChange }: Props) {
           rows={4}
           value={data.whyUs}
           onChange={(e) => onChange({ whyUs: e.target.value })}
-          placeholder="Javobingizni yozing..."
+          placeholder="Javobingizni yozing... (ixtiyoriy)"
         />
       </label>
 
@@ -50,16 +50,44 @@ export function StepMotivation({ data, onChange }: Props) {
           />
           Navbatma-navbat
         </label>
+        <label className="chip">
+          <input
+            type="radio"
+            name="shift"
+            checked={data.shiftPreference === 'farqi_yoq'}
+            onChange={() => onChange({ shiftPreference: 'farqi_yoq' })}
+          />
+          Farqi yoʻq
+        </label>
       </fieldset>
 
-      <label className="field">
-        <span>Maosh boʻyicha soʻrovingiz</span>
+      <label className="skip-row">
         <input
-          value={data.salaryRequest}
-          onChange={(e) => onChange({ salaryRequest: e.target.value })}
-          placeholder="Masalan: 4 000 000 soʻm"
+          type="checkbox"
+          checked={data.salaryNegotiable}
+          onChange={() =>
+            onChange({
+              salaryNegotiable: !data.salaryNegotiable,
+              salaryRequest: !data.salaryNegotiable ? '' : data.salaryRequest,
+            })
+          }
         />
+        <span>
+          <strong>Maosh kelishiladi</strong>
+          <em>Aniq summa aytmayman</em>
+        </span>
       </label>
+
+      {!data.salaryNegotiable && (
+        <label className="field">
+          <span>Maosh boʻyicha soʻrovingiz</span>
+          <input
+            value={data.salaryRequest}
+            onChange={(e) => onChange({ salaryRequest: e.target.value })}
+            placeholder="Masalan: 4 000 000 soʻm"
+          />
+        </label>
+      )}
 
       <label className="field">
         <span>Qoʻshimcha izoh (ixtiyoriy)</span>

@@ -26,22 +26,43 @@ const QUESTIONS: { key: keyof AppFormData; text: string }[] = [
 ];
 
 export function StepKnowledge({ data, onChange }: Props) {
+  const toggleSkip = () => {
+    const next = !data.skipKnowledge;
+    onChange({
+      skipKnowledge: next,
+      ...(next
+        ? { q8: '', q9: '', q10: '', q11: '', q12: '', q13: '', q14: '', q15: '' }
+        : {}),
+    });
+  };
+
   return (
     <div className="step-body">
       <h2>Kasbiy bilimlar</h2>
-      <p className="step-lead">Farmatsevtik bilimingizni qisqa javoblar bilan koʻrsating.</p>
+      <p className="step-lead">
+        Javob bersangiz yaxshi. Bilmasangiz yoki hozircha oʻtkazib yubormoqchi boʻlsangiz — belgilang.
+      </p>
 
-      {QUESTIONS.map((q) => (
-        <label key={q.key} className="field">
-          <span>{q.text}</span>
-          <textarea
-            rows={2}
-            value={String(data[q.key] ?? '')}
-            onChange={(e) => onChange({ [q.key]: e.target.value } as Partial<AppFormData>)}
-            placeholder="Javobingiz..."
-          />
-        </label>
-      ))}
+      <label className="skip-row">
+        <input type="checkbox" checked={data.skipKnowledge} onChange={toggleSkip} />
+        <span>
+          <strong>Hozircha javob bermayman</strong>
+          <em>Savollarni oʻtkazib yuborish</em>
+        </span>
+      </label>
+
+      {!data.skipKnowledge &&
+        QUESTIONS.map((q) => (
+          <label key={q.key} className="field">
+            <span>{q.text}</span>
+            <textarea
+              rows={2}
+              value={String(data[q.key] ?? '')}
+              onChange={(e) => onChange({ [q.key]: e.target.value } as Partial<AppFormData>)}
+              placeholder="Javobingiz... (bilmasangiz boʻsh qoldiring)"
+            />
+          </label>
+        ))}
     </div>
   );
 }

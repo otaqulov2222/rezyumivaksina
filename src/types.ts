@@ -2,7 +2,7 @@ export type ComputerSkill = 'yoq' | 'ortacha' | 'yaxshi' | '';
 export type PharmaPrograms = 'yoq' | 'ha' | '';
 export type JppCert = 'bor' | 'yoq' | '';
 export type MedicineKnowledge = 'boshlangich' | 'orta' | 'yuqori' | '';
-export type ShiftPref = 'ertalabki' | 'kechki' | 'navbat' | '';
+export type ShiftPref = 'ertalabki' | 'kechki' | 'navbat' | 'farqi_yoq' | '';
 
 export interface FormData {
   // 1. Shaxsiy
@@ -14,12 +14,14 @@ export interface FormData {
   email: string;
 
   // 2. Ta'lim
+  noEducation: boolean;
   educationInstitution: string;
   graduationYear: string;
   specialty: string;
   diplomaNumber: string;
 
   // 3. Ish tajribasi
+  noExperience: boolean;
   lastWorkplace: string;
   position: string;
   experienceYears: string;
@@ -30,6 +32,7 @@ export interface FormData {
   pharmaPrograms: PharmaPrograms;
   pharmaProgramsWhich: string;
   jppCertificate: JppCert;
+  noForeignLanguages: boolean;
   foreignLanguages: string;
   medicineKnowledge: MedicineKnowledge;
 
@@ -45,15 +48,18 @@ export interface FormData {
   // 6. Qo'shimcha savollar
   whyUs: string;
   shiftPreference: ShiftPref;
+  salaryNegotiable: boolean;
   salaryRequest: string;
   additionalNotes: string;
 
   // 7. Hujjatlar
+  noDocuments: boolean;
   hasPassport: boolean;
   hasDiploma: boolean;
   hasResume: boolean;
 
   // 8–15 Kasbiy bilimlar
+  skipKnowledge: boolean;
   q8: string;
   q9: string;
   q10: string;
@@ -71,10 +77,12 @@ export const initialFormData: FormData = {
   address: '',
   phone: '',
   email: '',
+  noEducation: false,
   educationInstitution: '',
   graduationYear: '',
   specialty: '',
   diplomaNumber: '',
+  noExperience: false,
   lastWorkplace: '',
   position: '',
   experienceYears: '',
@@ -83,6 +91,7 @@ export const initialFormData: FormData = {
   pharmaPrograms: '',
   pharmaProgramsWhich: '',
   jppCertificate: '',
+  noForeignLanguages: false,
   foreignLanguages: '',
   medicineKnowledge: '',
   qualities: {
@@ -94,11 +103,14 @@ export const initialFormData: FormData = {
   },
   whyUs: '',
   shiftPreference: '',
+  salaryNegotiable: false,
   salaryRequest: '',
   additionalNotes: '',
+  noDocuments: false,
   hasPassport: false,
   hasDiploma: false,
   hasResume: false,
+  skipKnowledge: false,
   q8: '',
   q9: '',
   q10: '',
