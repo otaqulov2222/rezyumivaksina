@@ -47,6 +47,9 @@ export function createApp() {
       ok: true,
       telegramConfigured: Boolean(process.env.TELEGRAM_BOT_TOKEN && chatIds.length),
       chatCount: chatIds.length,
+      chats: chatIds.map((id) =>
+        id.length > 6 ? `${id.slice(0, id.startsWith('-') ? 3 : 2)}…${id.slice(-3)}` : '***',
+      ),
       groupStore: storeConfigured(),
       groupCount,
     });
