@@ -97,7 +97,7 @@ export function createApp() {
           ['resume', 'Rezyume'],
         ];
 
-        for (const chatId of chatIds) {
+        const deliverTo = async (chatId) => {
           await sendMessageToTelegram({ botToken, chatId, text: caption });
           await sendPdfToTelegram({
             botToken,
@@ -120,11 +120,43 @@ export function createApp() {
               });
             }
           }
+        };
+
+        const results = await Promise.allSettled(
+          chatIds.map(async (chatId) => {
+            try {
+              await deliverTo(chatId);
+            } catch (err) {
+              // Guruh supergroup'ga aylansa Telegram yangi ID beradi
+              if (err.migrateToChatId) {
+                console.warn(
+                  `Chat ${chatId} yangi ID ga koʻchgan: ${err.migrateToChatId}. TELEGRAM_CHAT_ID ni yangilang.`
+                );
+                await deliverTo(err.migrateToChatId);
+                return;
+              }
+              throw err;
+            }
+          })
+        );
+
+        const failed = results
+          .map((r, i) => ({ r, chatId: chatIds[i] }))
+          .filter(({ r }) => r.status === 'rejected');
+
+        for (const { r, chatId } of failed) {
+          console.error(`Chat ${chatId} ga yuborilmadi:`, r.reason?.message);
+        }
+
+        if (failed.length === chatIds.length) {
+          throw new Error(failed[0].r.reason?.message || 'Telegramga yuborib boʻlmadi');
         }
 
         res.json({
           ok: true,
-          message: `Anketa ${chatIds.length} ta chatga yuborildi.`,
+          message: 'Anketa yuborildi.',
+          delivered: chatIds.length - failed.length,
+          failed: failed.length,
         });
       } catch (err) {
         console.error(err);

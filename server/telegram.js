@@ -24,7 +24,11 @@ function postForm(url, form) {
             return;
           }
           if (!json.ok) {
-            reject(new Error(json.description || 'Telegram xatosi'));
+            const err = new Error(json.description || 'Telegram xatosi');
+            err.code = json.error_code;
+            err.migrateToChatId = json.parameters?.migrate_to_chat_id;
+            err.retryAfter = json.parameters?.retry_after;
+            reject(err);
             return;
           }
           resolve(json);

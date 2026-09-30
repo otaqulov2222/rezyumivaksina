@@ -66,7 +66,28 @@ yoki [ngrok](https://ngrok.com) — chiqqan HTTPS linkni nomzodga yuboring.
 1. GitHub repo ulangan boʻlsin (`otaqulov2222/rezyumivaksina`)
 2. **Environment Variables** qoʻshing:
    - `TELEGRAM_BOT_TOKEN` — BotFather token
-   - `TELEGRAM_CHAT_ID` — PDF keladigan chat ID
+   - `TELEGRAM_CHAT_ID` — PDF keladigan chat ID(lar), vergul bilan
 3. Framework: **Vite** → **Deploy**
 
 Deploydan keyin ochilgan `*.vercel.app` linkni nomzodlarga bering.
+
+## Koʻp odamga va guruhga yuborish
+
+`TELEGRAM_CHAT_ID` ga istalgancha ID yozish mumkin, vergul bilan:
+
+```
+8580032081,1261049793,-1001234567890
+```
+
+- **Shaxsiy chat** — musbat son. Odam avval botga `/start` bosgan boʻlishi shart.
+- **Guruh** — manfiy son (`-100...` bilan boshlanadi).
+
+Guruh qoʻshish:
+
+1. Botni guruhga aʼzo qilib qoʻshing (guruhda faqat adminlar yoza olsa — botni admin qiling)
+2. Guruhda biror xabar yozing
+3. Kompyuterda: `npm run chats` — guruh ID si chiqadi
+4. Shu ID ni Vercel → Environment Variables → `TELEGRAM_CHAT_ID` ga vergul bilan qoʻshing
+5. Vercel → Deployments → **Redeploy**
+
+Bitta chatga yuborilmasa ham (masalan, odam botni bloklagan) qolganlarga baribir yetib boradi.
