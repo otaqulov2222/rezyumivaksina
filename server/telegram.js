@@ -63,6 +63,14 @@ export async function sendFileToTelegram({ botToken, chatId, buffer, filename, c
   return postForm(url, form);
 }
 
+export async function leaveTelegramChat({ botToken, chatId }) {
+  const form = new FormData();
+  form.append('chat_id', String(chatId));
+
+  const url = `https://api.telegram.org/bot${botToken}/leaveChat`;
+  return postForm(url, form);
+}
+
 export async function sendMessageToTelegram({ botToken, chatId, text }) {
   const form = new FormData();
   form.append('chat_id', String(chatId));

@@ -82,12 +82,20 @@ Deploydan keyin ochilgan `*.vercel.app` linkni nomzodlarga bering.
 - **Shaxsiy chat** — musbat son. Odam avval botga `/start` bosgan boʻlishi shart.
 - **Guruh** — manfiy son (`-100...` bilan boshlanadi).
 
-Guruh qoʻshish:
-
-1. Botni guruhga aʼzo qilib qoʻshing (guruhda faqat adminlar yoza olsa — botni admin qiling)
-2. Guruhda biror xabar yozing
-3. Kompyuterda: `npm run chats` — guruh ID si chiqadi
-4. Shu ID ni Vercel → Environment Variables → `TELEGRAM_CHAT_ID` ga vergul bilan qoʻshing
-5. Vercel → Deployments → **Redeploy**
-
 Bitta chatga yuborilmasa ham (masalan, odam botni bloklagan) qolganlarga baribir yetib boradi.
+
+## Guruhlarga avtomatik yuborish
+
+Botni guruhga qoʻshsangiz — oʻsha guruh avtomatik roʻyxatga tushadi, chiqarsangiz — oʻchadi.
+
+**Xavfsizlik:** guruh faqat botni xodim qoʻshgan boʻlsa roʻyxatga tushadi. Xodim — `TELEGRAM_CHAT_ID` dagi shaxsiy chat egalari yoki `TELEGRAM_ADMIN_IDS`. Begona odam qoʻshsa, bot oʻzi guruhdan chiqib ketadi.
+
+Bir martalik sozlash:
+
+1. Vercel → loyiha → **Storage** → **Upstash Redis** yarating va loyihaga ulang (`KV_REST_API_URL`, `KV_REST_API_TOKEN` oʻzi qoʻshiladi)
+2. **Redeploy**
+3. Kompyuterda: `npm run webhook -- https://rezyumivaksina-pearl.vercel.app`
+
+Botni oldindan qoʻshilgan guruhga ulash uchun: guruhda xodim `/start` yozadi.
+
+Webhookni oʻchirib, eski holatga qaytarish: `npm run webhook -- --delete`

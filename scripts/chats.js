@@ -8,6 +8,12 @@ if (!token) {
 
 const res = await fetch(`https://api.telegram.org/bot${token}/getUpdates`);
 const json = await res.json();
+if (json.error_code === 409) {
+  console.log(
+    'Webhook yoqilgan — guruhlar avtomatik saqlanmoqda, bu skript kerak emas.\nGuruhlar sonini koʻrish: https://<sayt>/api/health'
+  );
+  process.exit(0);
+}
 if (!json.ok) {
   console.error('Telegram xatosi:', json.description);
   process.exit(1);

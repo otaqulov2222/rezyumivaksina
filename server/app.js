@@ -7,6 +7,9 @@ import {
   sendFileToTelegram,
   sendMessageToTelegram,
 } from './telegram.js';
+import { addGroup, listGroups, removeGroup, storeConfigured } from './chatStore.js';
+import { handleTelegramUpdate } from './telegramWebhook.js';
+import { webhookSecret } from './webhookSecret.js';
 
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -21,18 +24,47 @@ function parseChatIds(raw) {
     .filter(Boolean);
 }
 
+/** Botni guruhga qoʻsha oladiganlar: TELEGRAM_CHAT_ID dagi shaxsiy chatlar + TELEGRAM_ADMIN_IDS */
+function adminIds() {
+  const privateIds = parseChatIds(process.env.TELEGRAM_CHAT_ID).filter((id) => !id.startsWith('-'));
+  return [...new Set([...privateIds, ...parseChatIds(process.env.TELEGRAM_ADMIN_IDS)])];
+}
+
 export function createApp() {
   const app = express();
   app.use(cors());
   app.use(express.json({ limit: '2mb' }));
 
-  app.get('/api/health', (_req, res) => {
+  app.get('/api/health', async (_req, res) => {
     const chatIds = parseChatIds(process.env.TELEGRAM_CHAT_ID);
+    let groupCount = null;
+    if (storeConfigured()) {
+      groupCount = await listGroups()
+        .then((g) => g.length)
+        .catch(() => null);
+    }
     res.json({
       ok: true,
       telegramConfigured: Boolean(process.env.TELEGRAM_BOT_TOKEN && chatIds.length),
       chatCount: chatIds.length,
+      groupStore: storeConfigured(),
+      groupCount,
     });
+  });
+
+  app.post('/api/telegram/webhook', async (req, res) => {
+    const botToken = process.env.TELEGRAM_BOT_TOKEN;
+    if (!botToken || req.get('X-Telegram-Bot-Api-Secret-Token') !== webhookSecret(botToken)) {
+      res.status(401).end();
+      return;
+    }
+    try {
+      await handleTelegramUpdate(req.body || {}, { botToken, adminIds: adminIds() });
+    } catch (err) {
+      console.error('Webhook xatosi:', err.message);
+    }
+    // Telegram xatoda qayta-qayta yubormasligi uchun doim 200
+    res.json({ ok: true });
   });
 
   app.post(
@@ -45,7 +77,16 @@ export function createApp() {
     async (req, res) => {
       try {
         const botToken = process.env.TELEGRAM_BOT_TOKEN;
-        const chatIds = parseChatIds(process.env.TELEGRAM_CHAT_ID);
+        const envChatIds = parseChatIds(process.env.TELEGRAM_CHAT_ID);
+
+        let storedGroups = [];
+        try {
+          storedGroups = await listGroups();
+        } catch (err) {
+          console.error('Guruhlar roʻyxati oʻqilmadi:', err.message);
+        }
+        const storedIds = new Set(storedGroups.map((g) => g.id));
+        const chatIds = [...new Set([...envChatIds, ...storedIds])];
 
         if (!botToken || chatIds.length === 0) {
           res.status(500).json({
@@ -129,11 +170,21 @@ export function createApp() {
             } catch (err) {
               // Guruh supergroup'ga aylansa Telegram yangi ID beradi
               if (err.migrateToChatId) {
-                console.warn(
-                  `Chat ${chatId} yangi ID ga koʻchgan: ${err.migrateToChatId}. TELEGRAM_CHAT_ID ni yangilang.`
-                );
+                if (storedIds.has(chatId)) {
+                  const title = storedGroups.find((g) => g.id === chatId)?.title;
+                  await removeGroup(chatId).catch(() => {});
+                  await addGroup(err.migrateToChatId, title).catch(() => {});
+                } else {
+                  console.warn(
+                    `Chat ${chatId} yangi ID ga koʻchgan: ${err.migrateToChatId}. TELEGRAM_CHAT_ID ni yangilang.`
+                  );
+                }
                 await deliverTo(err.migrateToChatId);
                 return;
+              }
+              // Bot chiqarilgan yoki guruh oʻchirilgan boʻlsa roʻyxatdan olib tashlaymiz
+              if (storedIds.has(chatId) && (err.code === 403 || /chat not found/i.test(err.message))) {
+                await removeGroup(chatId).catch(() => {});
               }
               throw err;
             }
